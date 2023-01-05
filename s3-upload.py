@@ -4,7 +4,8 @@ from botocore.exceptions import NoCredentialsError
 
 ACCESS_KEY = os.environ.get('ACCESS_KEY')
 SECRET_KEY = os.environ.get('SECRET_KEY')
-print(ACCESS_KEY)
+BUCKET = os.environ.get('BUCKET')
+
 
 
 def upload_to_aws(local_file, bucket, s3_file):
@@ -23,4 +24,4 @@ def upload_to_aws(local_file, bucket, s3_file):
         return False
 
 
-uploaded = upload_to_aws('s3-upload.py', 'tn-s3-cloud-formation', 'tst.sh')
+uploaded = upload_to_aws('aws-s3-cloud-formation.yaml', 'tn-s3-cloud-formation', 'aws-s3-cloud-formation.yaml')

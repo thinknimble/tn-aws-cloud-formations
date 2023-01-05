@@ -10,13 +10,9 @@ jobs:
     env:
       ACCESS_KEY: ${{ secrets.AWS_KEY_ID }}
       SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      BUCKET: ${{ secrets.AWS_BUCKET }}
     steps:
       - uses: actions/checkout@master
-      - run: |
-          mkdir upload
-          cp ./aws-s3-cloud-formation.yaml ./upload/aws-s3-cloud-formation.yaml
-          echo ${{ secrets.AWS_KEY_ID }}
-
       - run: "ls -a"
       - uses: actions/setup-python@v2
         with:
