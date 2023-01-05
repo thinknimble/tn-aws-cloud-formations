@@ -32,7 +32,12 @@ The following arguments are required:
 - `--template-body file://<FILE-PATH>`  path should start with file:// one of `--template-body` or `--template-url`
 - `--template-url <FILE-URL>` one of `--template-body` or `--template-url`
 
-
+### Using the AWS Console
+- visit the console, sign in and navigate to the CloudFormation Dashboard
+- Click create stack (with new resources)
+- select Template is ready
+- Select Amazon S3 URL and provide the yaml file from this repo uploaded to S3 as the [link](https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml)
+- Click next and pass in the required parameter value (S3 Bucket Name)
 
 ### Get the appropriate output variables 
 
