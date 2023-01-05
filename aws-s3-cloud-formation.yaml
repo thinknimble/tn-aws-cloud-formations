@@ -42,7 +42,10 @@ Resources:
     DependsOn : ["S3Bucket"]
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Join ["-", [ !Ref S3Bucket,"user-bucket-policy" ] ]
+      ManagedPolicyName: 
+        Fn::Sub:
+          - "user-bucket-policy-${name}"
+          - name: !Ref S3Bucket
       PolicyDocument:
         Statement:
           - Action:
@@ -74,6 +77,29 @@ Resources:
   IAMUser:
     Type: AWS::IAM::User
     Properties:        
-      UserName: !Ref S3Bucket
+      UserName: 
+        Fn::Sub:  
+          - "default-user-${name}"
+          - name: !Ref S3Bucket
       ManagedPolicyArns:
         - !Ref IAMPolicy
+  IAMUserCreds:
+    Type: AWS::IAM::AccessKey
+    Properties: 
+      UserName: !Ref IAMUser
+Outputs:
+  BucketName: 
+    Description: value for env var AWS_STORAGE_BUCKET_NAME
+    Value: !Ref S3Bucket
+  IAMUser:
+    Description: the arn of the user for quick access and look up
+    Value: !GetAtt  IAMUser.Arn
+  IAMUserAccessKey:
+    Description: Temporarily Showing this until we create a bucket to push to
+    Value: !Ref IAMUserCreds
+  IAMUserAccessSecret:
+    Description: Temporarily Showing this until we create a bucket to push to
+    Value: !GetAtt  IAMUserCreds.SecretAccessKey
+
+
+  
