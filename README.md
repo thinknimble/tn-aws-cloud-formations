@@ -1,5 +1,7 @@
 # Create an s3 bucket and required resources 
 
+Use this cloud formaiton to quickly spin up the appropriate resources (IAM,Bucket,Bucket Policies etc) for a webapp using AWS storage
+
 ## Using cli 
 
 <details>
@@ -23,11 +25,12 @@ Install AWS CLI
 `aws cloudformation create-stack --stack-name <STACK-NAME> --template-url file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM --profile tn`
 
 The following arguments are required: 
-`--stack-name <STACK-NAME>` this must be unique 
-`--parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME>` BUCKET-NAME must be unique and lowercased
-`--capabilities CAPABILITY_NAMED_IAM`
-`--template-body file://<FILE-PATH>`  path should start with file:// one of `--template-body` or `--template-url`
-`--template-url <FILE-URL>` one of `--template-body` or `--template-url`
+
+- `--stack-name <STACK-NAME>` this must be unique 
+- `--parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME>` BUCKET-NAME must be unique and lowercased
+- `--capabilities CAPABILITY_NAMED_IAM`
+- `--template-body file://<FILE-PATH>`  path should start with file:// one of `--template-body` or `--template-url`
+- `--template-url <FILE-URL>` one of `--template-body` or `--template-url`
 
 
 
