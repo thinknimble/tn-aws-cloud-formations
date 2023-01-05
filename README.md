@@ -18,11 +18,11 @@ Install AWS CLI
 ### CLI Command
 #### With file 
 
-`aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM --profile tn`
+`aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM`
 
 #### With URL
 
-`aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM --profile tn`
+`aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM`
 
 The following arguments are required: 
 
@@ -45,6 +45,8 @@ When the cloud formation is done you can get the Access Key Id, Secret and Bucke
 
 #### Using the cli 
 `aws cloudformation describe-stacks --stack-name <STACK-NAME>` from the previously create command
+
+This will return a json object to retrieve the variables tab down to the `Outputs` key
 
 #### Using the console 
 
