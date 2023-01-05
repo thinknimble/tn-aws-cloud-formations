@@ -91,14 +91,17 @@ Outputs:
   BucketName: 
     Description: value for env var AWS_STORAGE_BUCKET_NAME
     Value: !Ref S3Bucket
+  BucketRegionalDomain: 
+    Description: This domain name includes the region so we can see what region the bucket was created in for the variable AWS_S3_REGION_NAM
+    Value: !GetAtt S3Bucket.RegionalDomainName
   IAMUser:
     Description: the arn of the user for quick access and look up
     Value: !GetAtt  IAMUser.Arn
   IAMUserAccessKey:
-    Description: Temporarily Showing this until we create a bucket to push to
+    Description: Temporarily Showing this until we create a bucket to push to AWS_ACCESS_KEY_ID 
     Value: !Ref IAMUserCreds
   IAMUserAccessSecret:
-    Description: Temporarily Showing this until we create a bucket to push to
+    Description: Temporarily Showing this until we create a bucket to push to AWS_SECRET_ACCESS_KEY
     Value: !GetAtt  IAMUserCreds.SecretAccessKey
 
 
