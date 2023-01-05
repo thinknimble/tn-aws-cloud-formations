@@ -24,4 +24,4 @@ def upload_to_aws(local_file, bucket, s3_file):
         return False
 
 
-uploaded = upload_to_aws('aws-s3-cloud-formation.yaml', 'tn-s3-cloud-formation', 'aws-s3-cloud-formation.yaml')
+uploaded = upload_to_aws('aws-s3-cloud-formation.yaml', BUCKET, 'aws-s3-cloud-formation.yaml')
