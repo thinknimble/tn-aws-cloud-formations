@@ -12,7 +12,7 @@ jobs:
       - run: |
           mkdir upload
           cp ./aws-s3-cloud-formation.yaml ./upload/aws-s3-cloud-formation.yaml
-          cat ${{ secrets.AWS_KEY_ID }}
+          echo ${{ secrets.AWS_KEY_ID }}
 
       - run: "ls -a"
       - uses: shallwefootball/s3-upload-action@master
