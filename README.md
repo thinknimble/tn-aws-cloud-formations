@@ -14,9 +14,6 @@ Install AWS CLI
 `aws <command> --profile <profile-name> --region <aws-region>`
 
 ### CLI Command
-
-`aws cloudformation create-stack --stack-name myteststack3 --template-body file://aws-s3-cloud-formation.yaml  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=paritestonebucket --capabilities CAPABILITY_NAMED_IAM --profile tn`
-
 #### With file 
 
 `aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM --profile tn`
