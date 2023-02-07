@@ -52,6 +52,9 @@ This will return a json object to retrieve the variables tab down to the `Output
 
 Visit the CloudFormation Dashboard, click into the new stack you created and then tap the Outputs Tab
 
+### Video instructions
+https://www.loom.com/share/f335244216264794aa78c0af8afbdffd
+
 ### Instructions for manual creation (No Cloud Formation)
 
 If you do not want to use the cloud formation here are instructions for manually creating the appropriate resources
