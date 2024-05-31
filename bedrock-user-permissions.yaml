@@ -10,12 +10,15 @@ Resources:
   BedrockManagedPolicy:
     Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      ManagedPolicyName: "BedrockPolicy"
+      ManagedPolicyName: 
+        Fn::Sub:
+          - "bedrock-policy-${name}"
+          - name: !Ref ProjectName
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "DenyInference"
-            Effect: "Deny"
+          - Sid: "AllowInterface"
+            Effect: "Allow"
             Action:
               - "bedrock:InvokeModel"
               - "bedrock:InvokeModelWithResponseStream"
