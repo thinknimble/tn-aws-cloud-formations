@@ -1,59 +1,71 @@
-# Create an s3 bucket and required resources 
+# ThinkNimble AWS CloudFormations
 
-Use this cloud formaiton to quickly spin up the appropriate resources (IAM,Bucket,Bucket Policies etc) for a webapp using AWS storage
+This repository provides AWS CloudFormation configs that streamline the process of creating application resources on AWS that we commonly use in our applications. For instance, it is best practice to create a unique IAM user per app and follow the Principle of Least Privilege, meaning that user's permissions should be limited to only what is needed for the app.
 
-## Using cli 
+There are currently two configurations and instructions below.
 
-<details>
-<summary>
-Install AWS CLI
-</summary>
-[Follow These instructions](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-</details>
+- [Create S3 Bucket](#create-s3-bucket)
+- [Create Bedrock Permissions Policy](#create-a-bedrock-permissions-policy)
+
+These configurations require the AWS CLI. [Follow these instructions to get started](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+## Create S3 Bucket
+
+Our apps use S3 to store user-uploaded files and other static media. Use this cloud formaiton to quickly spin up a Bucket, IAM User, and secure Bucket Policies.
 
 **Please note if you have multiple aws accounts configured you will need to pass the profile key and if a region is not set the region key**
 
-`aws <command> --profile <profile-name> --region <aws-region>`
+```term
+aws <command> --profile <profile-name> --region <aws-region>
+```
 
-### CLI Command
-#### With file 
+### CLI Command Using the YAML File
 
-`aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM`
+For this to work, you will need to download the YAML file or clone this repository.
 
-#### With URL
+```term
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM
+```
 
-`aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM`
+### CLI Command Using the URL
 
-The following arguments are required: 
+For convenience, the configs are also available on a public S3 bucket, so that you do not need to download them.
 
-- `--stack-name <STACK-NAME>` this must be unique 
+```term
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM
+```
+
+The following arguments are required:
+
+- `--stack-name <STACK-NAME>` this must be unique
 - `--parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME>` BUCKET-NAME must be unique and lowercased
 - `--capabilities CAPABILITY_NAMED_IAM`
-- `--template-body file://<FILE-PATH>`  path should start with file:// one of `--template-body` or `--template-url`
+- `--template-body file://<FILE-PATH>` path should start with file:// one of `--template-body` or `--template-url`
 - `--template-url <FILE-URL>` one of `--template-body` or `--template-url`
 
 ### Using the AWS Console
-- visit the console, sign in and navigate to the CloudFormation Dashboard
+
+You can also run the "stack" from the AWS Console:
+
+- Visit the console, sign in and navigate to the CloudFormation Dashboard
 - Click create stack (with new resources)
 - select Template is ready
 - Select Amazon S3 URL and provide the yaml file from this repo uploaded to S3 as the [link](https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml)
 - Click next and pass in the required parameter value (S3 Bucket Name)
 
-### Get the appropriate output variables 
+### Get the appropriate output variables
 
-When the cloud formation is done you can get the Access Key Id, Secret and Bucket name from the outputs 
+When the cloud formation is done you can get the Access Key ID, Secret, and Bucket name from the outputs
 
-#### Using the cli 
+#### Using the cli
+
 `aws cloudformation describe-stacks --stack-name <STACK-NAME>` from the previously create command
 
 This will return a json object to retrieve the variables tab down to the `Outputs` key
 
-#### Using the console 
+#### Using the console
 
 Visit the CloudFormation Dashboard, click into the new stack you created and then tap the Outputs Tab
-
-### Video instructions
-https://www.loom.com/share/f335244216264794aa78c0af8afbdffd
 
 ### Instructions for manual creation (No Cloud Formation)
 
@@ -61,37 +73,28 @@ If you do not want to use the cloud formation here are instructions for manually
 
 [Read on Notion](https://www.notion.so/thinknimble/AWS-b5e1ffd8f06d459788515843fea41418#c723773015fd436c9ba801ba663dda13)
 
+## Create an AWS Bedrock Permissions Policy
 
-<details>
-  <summary>Bedrock Permissions Policy </summary>
-  First, an AWS Administrator will need to enable Amazon Bedrock organization-wide. They will have to request access to the models we want to use. To do this: Go to AWS Bedrock in the console and follow the instructions there. I've done this for our TN Staging and Production AWS orgs)
+Our apps use AWS Bedrock for fast and low-cost LLM features. An IAM User with the proper permissions is required.
 
+## Setup
 
-<details>
-<summary>Start stack</summary>
+First, an AWS Administrator will need to enable Amazon Bedrock organization-wide. They will have to request access to the models we want to use. To do this: Go to AWS Bedrock in the console and follow the instructions there. I've done this for our TN Staging and Production AWS orgs
 
-With File
+### With File
 
-`aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://bedrock-user-permissions.yaml  --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM`
+```term
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://bedrock-user-permissions.yaml  --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM
+```
 
-With URL
+### With URL
 
-`aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/bedrock-user-permissions.yaml' --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM`
+```term
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/bedrock-user-permissions.yaml' --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM
+```
 
+### Check Status & Outputs with File
 
-</details>
-
-<details>
-<summary>Check Status & Outputs</summary>
-
-With File
-
-`aws cloudformation describe-stacks --stack-name <STACK-NAME>`
-
-</details>
-
-
-
-
-
-</details>
+```term
+aws cloudformation describe-stacks --stack-name <STACK-NAME>
+```
