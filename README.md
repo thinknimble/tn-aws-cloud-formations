@@ -60,3 +60,38 @@ https://www.loom.com/share/f335244216264794aa78c0af8afbdffd
 If you do not want to use the cloud formation here are instructions for manually creating the appropriate resources
 
 [Read on Notion](https://www.notion.so/thinknimble/AWS-b5e1ffd8f06d459788515843fea41418#c723773015fd436c9ba801ba663dda13)
+
+
+<details>
+  <summary>Bedrock Permissions Policy </summary>
+  First, an AWS Administrator will need to enable Amazon Bedrock organization-wide. They will have to request access to the models we want to use. To do this: Go to AWS Bedrock in the console and follow the instructions there. I've done this for our TN Staging and Production AWS orgs)
+
+
+<details>
+<summary>Start stack</summary>
+
+With File
+
+`aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://bedrock-user-permissions.yaml  --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM`
+
+With URL
+
+`aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/bedrock-user-permissions.yaml' --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM`
+
+
+</details>
+
+<details>
+<summary>Check Status & Outputs</summary>
+
+With File
+
+`aws cloudformation describe-stacks --stack-name <STACK-NAME>`
+
+</details>
+
+
+
+
+
+</details>

@@ -1,0 +1,51 @@
+Parameters:
+  ProjectName:
+    Type: String
+    Description: "Enter a name for the project"
+  AllowedModels:
+    Type: String
+    Description: "Optional arn of a model e.g arn:aws:bedrock:*::foundation-model/<SOME_MODEL_ID>"
+    Default: "*"
+Resources:
+  BedrockManagedPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: 
+        Fn::Sub:
+          - "bedrock-policy-${name}"
+          - name: !Ref ProjectName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowInterface"
+            Effect: "Allow"
+            Action:
+              - "bedrock:InvokeModel"
+              - "bedrock:InvokeModelWithResponseStream"
+            Resource:
+              - Ref: AllowedModels
+
+  IAMUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName:
+        Fn::Sub:
+          - "default-user-${name}"
+          - name: !Ref ProjectName
+      ManagedPolicyArns:
+        - !Ref BedrockManagedPolicy
+
+  IAMUserCreds:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref IAMUser
+Outputs:
+  IAMUser:
+    Description: the arn of the user for quick access and look up
+    Value: !GetAtt IAMUser.Arn
+  IAMUserAccessKey:
+    Description: Temporarily Showing this until we create a bucket to push to AWS_ACCESS_KEY_ID
+    Value: !Ref IAMUserCreds
+  IAMUserAccessSecret:
+    Description: Temporarily Showing this until we create a bucket to push to AWS_SECRET_ACCESS_KEY
+    Value: !GetAtt IAMUserCreds.SecretAccessKey
