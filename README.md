@@ -19,9 +19,25 @@ Our apps use S3 to store user-uploaded files and other static media. Use this cl
 aws <command> --profile <profile-name> --region <aws-region>
 ```
 
+#### What you will need
+
+- An aws access key and id with elevated priveleges to be able to run this command
+- A name for your cloud formation stack that is unique and in all caps
+- A name for your s3 bucket
+
+Things to consider: 
+
+- If you have multiple aws accounts you will need to pass in your profile --profile <name> to the args
+- If you do not have a default region set up you will also need to pass that in
+
+
 ### CLI Command Using the YAML File
 
 For this to work, you will need to download the YAML file or clone this repository.
+
+If you are setting this up on an aws account that does not have the file stored in its own S3 you will need to use the local file. 
+
+
 
 ```term
 aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM
