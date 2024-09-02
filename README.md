@@ -25,19 +25,16 @@ aws <command> --profile <profile-name> --region <aws-region>
 - A name for your cloud formation stack that is unique and in all caps
 - A name for your s3 bucket
 
-Things to consider: 
+Things to consider:
 
 - If you have multiple aws accounts you will need to pass in your profile --profile <name> to the args
 - If you do not have a default region set up you will also need to pass that in
-
 
 ### CLI Command Using the YAML File
 
 For this to work, you will need to download the YAML file or clone this repository.
 
-If you are setting this up on an aws account that does not have the file stored in its own S3 you will need to use the local file. 
-
-
+If you are setting this up on an aws account that does not have the file stored in its own S3 you will need to use the local file.
 
 ```term
 aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM
@@ -95,18 +92,18 @@ Our apps use AWS Bedrock for fast and low-cost LLM features. An IAM User with th
 
 ## Setup
 
-First, an AWS Administrator will need to enable Amazon Bedrock organization-wide. They will have to request access to the models we want to use. To do this: Go to AWS Bedrock in the console and follow the instructions there. I've done this for our TN Staging and Production AWS orgs
+First, an AWS Administrator will need to enable Amazon Bedrock organization-wide. They will have to request access to the models we want to use. To do this: Go to AWS Bedrock in the console and follow the instructions there. We have already done this for ThinkNimble's AWS accounts in us-east-1.
 
 ### With File
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://bedrock-user-permissions.yaml  --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://bedrock-user-permissions.yaml  --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=AllowedModels,ParameterValue=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL> --capabilities CAPABILITY_NAMED_IAM
 ```
 
 ### With URL
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/bedrock-user-permissions.yaml' --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/bedrock-user-permissions.yaml' --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=AllowedModels,ParameterValue=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM
 ```
 
 ### Check Status & Outputs with File
