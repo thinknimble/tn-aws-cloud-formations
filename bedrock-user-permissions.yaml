@@ -24,6 +24,13 @@ Resources:
               - "bedrock:InvokeModelWithResponseStream"
             Resource:
               - Ref: AllowedModels
+          - Sid: "AllowMarketplaceSubscriptions"
+            Effect: "Allow"
+            Action:
+              - "aws-marketplace:ViewSubscriptions"
+              - "aws-marketplace:Subscribe"
+              - "aws-marketplace:Unsubscribe"
+            Resource: "*"
 
   IAMUser:
     Type: AWS::IAM::User
