@@ -3,8 +3,9 @@ id: readme-sandbox-section
 parent: readme-update
 created: 2026-08-29T21:00:00Z
 priority: 1
-status: not_started
+status: in_progress
 depends-on: readme-overview-table
+locked-by: builder-MacBook-Pro.local-44193-1788033815
 ---
 
 # README documents the sandbox CloudFormation template
