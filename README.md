@@ -150,6 +150,8 @@ Launches an Ubuntu 24.04 EC2 instance in an isolated VPC with SSH-only ingress. 
 | `KeyPairName` | Yes | — | Name of an existing EC2 key pair for SSH access |
 | `SSHSourceCIDR` | Yes | — | CIDR block allowed to SSH into the instance (e.g. `203.0.113.0/32`) |
 | `InstanceType` | No | `t3.medium` | EC2 instance type |
+| `ExistingVpcId` | No | — | ID of an existing VPC to launch into (skips VPC creation) |
+| `ExistingSubnetId` | No | — | ID of a subnet in the existing VPC (required when `ExistingVpcId` is set) |
 
 ### CLI Command Using the YAML File
 
@@ -164,6 +166,16 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file:/
 ```term
 aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/sandbox-cloud-formation.yaml' --region us-east-1 --parameters ParameterKey=KeyPairName,ParameterValue=<KEY-PAIR-NAME> ParameterKey=SSHSourceCIDR,ParameterValue=<YOUR-CIDR> --capabilities CAPABILITY_NAMED_IAM
 ```
+
+### Using an Existing VPC
+
+By default, the sandbox template creates a new VPC for each stack. AWS accounts have a default limit of 5 VPCs per region, so if you are creating multiple sandboxes you can hit that limit quickly. To avoid this, pass `ExistingVpcId` and `ExistingSubnetId` to launch the instance into a VPC you already have:
+
+```term
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --parameters ParameterKey=KeyPairName,ParameterValue=<KEY-PAIR-NAME> ParameterKey=SSHSourceCIDR,ParameterValue=<YOUR-CIDR> ParameterKey=ExistingVpcId,ParameterValue=<VPC-ID> ParameterKey=ExistingSubnetId,ParameterValue=<SUBNET-ID> --capabilities CAPABILITY_NAMED_IAM
+```
+
+**Note:** The existing subnet must have internet access (via an Internet Gateway route) and auto-assign public IP addresses enabled, so the instance is reachable over SSH.
 
 ### Outputs
 
