@@ -3,7 +3,8 @@ id: readme-teardown-section
 parent: readme-update
 created: 2026-08-29T21:10:00Z
 priority: 1
-status: not_started
+status: in_progress
+locked-by: builder-MacBook-Pro.local-52484-1788034043
 depends-on: readme-overview-table
 ---
 
