@@ -2,10 +2,18 @@
 
 This repository provides AWS CloudFormation configs that streamline the process of creating application resources on AWS that we commonly use in our applications. For instance, it is best practice to create a unique IAM user per app and follow the Principle of Least Privilege, meaning that user's permissions should be limited to only what is needed for the app.
 
-There are currently two configurations and instructions below.
+There are currently three configurations and instructions below.
 
 - [Create S3 Bucket](#create-s3-bucket)
-- [Create Bedrock Permissions Policy](#create-a-bedrock-permissions-policy)
+- [Create Bedrock Permissions Policy](#create-an-aws-bedrock-permissions-policy)
+- [Create Sandbox Instance](#create-sandbox-instance)
+- [CI/CD](#cicd)
+
+| Template | Purpose | Section |
+|----------|---------|---------|
+| `aws-s3-cloud-formation.yaml` | S3 bucket with IAM user and secure bucket policies | [Create S3 Bucket](#create-s3-bucket) |
+| `bedrock-user-permissions.yaml` | IAM user with AWS Bedrock permissions | [Create Bedrock Permissions Policy](#create-an-aws-bedrock-permissions-policy) |
+| `sandbox-cloud-formation.yaml` | Ubuntu instance in an isolated VPC with SSH access | [Create Sandbox Instance](#create-sandbox-instance) |
 
 These configurations require the AWS CLI. [Follow these instructions to get started](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
@@ -37,7 +45,7 @@ For this to work, you will need to download the YAML file or clone this reposito
 If you are setting this up on an aws account that does not have the file stored in its own S3 you will need to use the local file.
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> ParameterKey=EnableEncryption,ParameterValue=true --capabilities CAPABILITY_NAMED_IAM
 ```
 
 ### CLI Command Using the URL
@@ -45,7 +53,7 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file:/
 For convenience, the configs are also available on a public S3 bucket, so that you do not need to download them.
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> ParameterKey=EnableEncryption,ParameterValue=true --capabilities CAPABILITY_NAMED_IAM
 ```
 
 The following arguments are required:
@@ -55,6 +63,10 @@ The following arguments are required:
 - `--capabilities CAPABILITY_NAMED_IAM`
 - `--template-body file://<FILE-PATH>` path should start with file:// one of `--template-body` or `--template-url`
 - `--template-url <FILE-URL>` one of `--template-body` or `--template-url`
+
+Optional parameters:
+
+- `ParameterKey=EnableEncryption,ParameterValue=true` enables AES-256 server-side encryption on the bucket (default: `false`)
 
 ### Using the AWS Console
 
@@ -72,9 +84,17 @@ When the cloud formation is done you can get the Access Key ID, Secret, and Buck
 
 #### Using the cli
 
-`aws cloudformation describe-stacks --stack-name <STACK-NAME>` from the previously create command
+Quick command to get just the outputs:
 
-This will return a json object to retrieve the variables tab down to the `Outputs` key
+```term
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].Outputs" --output table
+```
+
+Or as JSON:
+
+```term
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].Outputs"
+```
 
 #### Using the console
 
