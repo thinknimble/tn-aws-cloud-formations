@@ -3,7 +3,8 @@ id: readme-sandbox-existing-vpc-docs
 parent: readme-update
 created: 2026-08-29T21:10:00Z
 priority: 1
-status: not_started
+status: in_progress
+locked-by: builder-MacBook-Pro.local-48705-1788033944
 depends-on: readme-sandbox-section
 ---
 
