@@ -2,12 +2,28 @@ Parameters:
   BucketNameParameter:
     Type: String
     Description: "Enter a name for the bucket, note that buckets must have unique names and should be lowercased"
+  EnableEncryption:
+    Type: String
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: "Enable server-side encryption (AES-256) on the bucket"
+Conditions:
+  EncryptionEnabled: !Equals [!Ref EnableEncryption, "true"]
 Resources:
   S3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       # AccessControl: PublicRead
       BucketName: !Ref BucketNameParameter
+      BucketEncryption:
+        !If
+          - EncryptionEnabled
+          - ServerSideEncryptionConfiguration:
+              - ServerSideEncryptionByDefault:
+                  SSEAlgorithm: AES256
+          - !Ref "AWS::NoValue"
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
