@@ -193,6 +193,24 @@ To retrieve outputs after the stack is created:
 aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].Outputs" --output table
 ```
 
+## Deleting a Stack
+
+To delete any stack created by these templates (S3, Bedrock, or Sandbox), run:
+
+```term
+aws cloudformation delete-stack --stack-name <STACK-NAME>
+```
+
+All resources created by the stack are deleted automatically — CloudFormation manages the full lifecycle, so there are no orphaned resources left behind.
+
+To verify the stack has been fully deleted:
+
+```term
+aws cloudformation describe-stacks --stack-name <STACK-NAME>
+```
+
+Once deletion is complete, this command returns a `ValidationError` indicating the stack does not exist.
+
 ## CI/CD: Auto-publish to S3
 
 Pushing to `main` or `master` triggers a GitHub Actions workflow that automatically uploads all YAML templates in this repository to a public S3 bucket. This is what powers the `--template-url` option in the CLI commands above — templates stay up to date without manual uploads.
