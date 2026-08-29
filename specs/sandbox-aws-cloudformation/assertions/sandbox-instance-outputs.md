@@ -3,8 +3,7 @@ id: sandbox-instance-outputs
 parent: sandbox-aws-cloudformation
 created: 2026-08-29T21:00:00Z
 priority: 1
-status: in_progress
-locked-by: builder-MacBook-Pro.local-13635-1788033005
+status: done
 ---
 
 # Template launches an Ubuntu instance and outputs a ready-to-use IP
