@@ -3,7 +3,7 @@ id: readme-ci-section
 parent: readme-update
 created: 2026-08-29T21:00:00Z
 priority: 1
-status: not_started
+status: done
 depends-on: readme-overview-table
 ---
 

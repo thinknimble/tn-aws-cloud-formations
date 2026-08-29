@@ -7,7 +7,7 @@ There are currently three configurations and instructions below.
 - [Create S3 Bucket](#create-s3-bucket)
 - [Create Bedrock Permissions Policy](#create-an-aws-bedrock-permissions-policy)
 - [Create Sandbox Instance](#create-sandbox-instance)
-- [CI/CD](#cicd)
+- [CI/CD: Auto-publish to S3](#cicd-auto-publish-to-s3)
 
 | Template | Purpose | Section |
 |----------|---------|---------|
@@ -131,3 +131,19 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https:
 ```term
 aws cloudformation describe-stacks --stack-name <STACK-NAME>
 ```
+
+## CI/CD: Auto-publish to S3
+
+Pushing to `main` or `master` triggers a GitHub Actions workflow that automatically uploads all YAML templates in this repository to a public S3 bucket. This is what powers the `--template-url` option in the CLI commands above — templates stay up to date without manual uploads.
+
+The workflow lives in `.github/workflows/upload_to_s3.yaml`.
+
+### Required GitHub Actions Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `AWS_KEY_ID` | IAM access key ID with S3 write permissions |
+| `AWS_SECRET_ACCESS_KEY` | Corresponding secret access key |
+| `AWS_BUCKET` | Target S3 bucket name (e.g. `tn-s3-cloud-formation`) |
+
+Configure these in your repository's **Settings > Secrets and variables > Actions**.
