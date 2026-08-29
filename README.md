@@ -132,6 +132,55 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https:
 aws cloudformation describe-stacks --stack-name <STACK-NAME>
 ```
 
+## Create Sandbox Instance
+
+Launches an Ubuntu 24.04 EC2 instance in an isolated VPC with SSH-only ingress. Useful for creating disposable development sandboxes.
+
+#### What you will need
+
+- An AWS access key and ID with elevated privileges to run this command
+- A name for your CloudFormation stack that is unique
+- An existing EC2 key pair for SSH access
+- The CIDR block you want to allow SSH from (e.g. your IP as `203.0.113.5/32`)
+
+#### Parameters
+
+| Parameter | Required | Default | Description |
+|-----------|----------|---------|-------------|
+| `KeyPairName` | Yes | — | Name of an existing EC2 key pair for SSH access |
+| `SSHSourceCIDR` | Yes | — | CIDR block allowed to SSH into the instance (e.g. `203.0.113.0/32`) |
+| `InstanceType` | No | `t3.medium` | EC2 instance type |
+
+### CLI Command Using the YAML File
+
+For this to work, you will need to download the YAML file or clone this repository.
+
+```term
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --parameters ParameterKey=KeyPairName,ParameterValue=<KEY-PAIR-NAME> ParameterKey=SSHSourceCIDR,ParameterValue=<YOUR-CIDR> --capabilities CAPABILITY_NAMED_IAM
+```
+
+### CLI Command Using the URL
+
+```term
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/sandbox-cloud-formation.yaml' --region us-east-1 --parameters ParameterKey=KeyPairName,ParameterValue=<KEY-PAIR-NAME> ParameterKey=SSHSourceCIDR,ParameterValue=<YOUR-CIDR> --capabilities CAPABILITY_NAMED_IAM
+```
+
+### Outputs
+
+| Output | Description |
+|--------|-------------|
+| `PublicIP` | Public IP address of the sandbox instance |
+| `InstanceId` | EC2 instance ID |
+| `SpekkCommand` | Command to register the sandbox with the spekk CLI |
+
+The `SpekkCommand` output provides a ready-to-paste command that registers the new sandbox instance with the spekk CLI, so you can manage it via `spekk sandbox` commands.
+
+To retrieve outputs after the stack is created:
+
+```term
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].Outputs" --output table
+```
+
 ## CI/CD: Auto-publish to S3
 
 Pushing to `main` or `master` triggers a GitHub Actions workflow that automatically uploads all YAML templates in this repository to a public S3 bucket. This is what powers the `--template-url` option in the CLI commands above — templates stay up to date without manual uploads.
