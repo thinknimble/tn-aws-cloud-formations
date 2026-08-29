@@ -22,10 +22,37 @@ Parameters:
     Default: /aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id
     Description: Ubuntu 24.04 LTS AMI (resolved via Canonical SSM public parameter)
 
+  ExistingVpcId:
+    Type: String
+    Default: ''
+    Description: ID of an existing VPC to use. Leave empty to create a new VPC.
+
+  ExistingSubnetId:
+    Type: String
+    Default: ''
+    Description: ID of an existing subnet to use. Leave empty to create a new subnet. The subnet must have a route to an Internet Gateway and MapPublicIpOnLaunch enabled.
+
+Rules:
+  BothOrNeitherVpcSubnet:
+    Assertions:
+      - Assert:
+          Fn::Or:
+            - Fn::And:
+                - !Not [!Equals [!Ref ExistingVpcId, '']]
+                - !Not [!Equals [!Ref ExistingSubnetId, '']]
+            - Fn::And:
+                - !Equals [!Ref ExistingVpcId, '']
+                - !Equals [!Ref ExistingSubnetId, '']
+        AssertDescription: You must provide both ExistingVpcId and ExistingSubnetId, or leave both empty. Providing only one is not allowed.
+
+Conditions:
+  CreateNetworkResources: !Equals [!Ref ExistingVpcId, '']
+
 Resources:
-  # --- Networking ---
+  # --- Networking (created only when no existing VPC is provided) ---
   VPC:
     Type: AWS::EC2::VPC
+    Condition: CreateNetworkResources
     Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsSupport: true
@@ -36,6 +63,7 @@ Resources:
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
+    Condition: CreateNetworkResources
     Properties:
       Tags:
         - Key: Name
@@ -43,12 +71,14 @@ Resources:
 
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
+    Condition: CreateNetworkResources
     Properties:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
 
   PublicSubnet:
     Type: AWS::EC2::Subnet
+    Condition: CreateNetworkResources
     Properties:
       VpcId: !Ref VPC
       CidrBlock: 10.0.1.0/24
@@ -59,6 +89,7 @@ Resources:
 
   RouteTable:
     Type: AWS::EC2::RouteTable
+    Condition: CreateNetworkResources
     Properties:
       VpcId: !Ref VPC
       Tags:
@@ -67,6 +98,7 @@ Resources:
 
   PublicRoute:
     Type: AWS::EC2::Route
+    Condition: CreateNetworkResources
     DependsOn: VPCGatewayAttachment
     Properties:
       RouteTableId: !Ref RouteTable
@@ -75,6 +107,7 @@ Resources:
 
   SubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: CreateNetworkResources
     Properties:
       SubnetId: !Ref PublicSubnet
       RouteTableId: !Ref RouteTable
@@ -84,7 +117,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: SSH access for spekk sandbox
-      VpcId: !Ref VPC
+      VpcId: !If [CreateNetworkResources, !Ref VPC, !Ref ExistingVpcId]
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -101,7 +134,7 @@ Resources:
       ImageId: !Ref UbuntuAMI
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyPairName
-      SubnetId: !Ref PublicSubnet
+      SubnetId: !If [CreateNetworkResources, !Ref PublicSubnet, !Ref ExistingSubnetId]
       SecurityGroupIds:
         - !Ref SecurityGroup
       BlockDeviceMappings:

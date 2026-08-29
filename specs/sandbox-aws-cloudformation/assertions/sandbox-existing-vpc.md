@@ -3,8 +3,7 @@ id: sandbox-existing-vpc
 parent: sandbox-aws-cloudformation
 created: 2026-08-29T21:10:00Z
 priority: 1
-status: in_progress
-locked-by: builder-MacBook-Pro-local-55586-1788034117
+status: done
 ---
 
 # Sandbox template accepts an existing VPC and subnet instead of creating new ones
