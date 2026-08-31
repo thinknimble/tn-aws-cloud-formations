@@ -26,3 +26,4 @@ def upload_to_aws(local_file, bucket, s3_file):
 
 uploaded = upload_to_aws('aws-s3-cloud-formation.yaml', BUCKET, 'aws-s3-cloud-formation.yaml')
 uploaded = upload_to_aws('bedrock-user-permissions.yaml', BUCKET, 'bedrock-user-permissions.yaml')
+uploaded = upload_to_aws('sandbox-cloud-formation.yaml', BUCKET, 'sandbox-cloud-formation.yaml')

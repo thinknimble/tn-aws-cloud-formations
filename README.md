@@ -140,15 +140,14 @@ Launches an Ubuntu 24.04 EC2 instance in an isolated VPC with SSH-only ingress. 
 
 - An AWS access key and ID with elevated privileges to run this command
 - A name for your CloudFormation stack that is unique
-- An existing EC2 key pair for SSH access
-- The CIDR block you want to allow SSH from (e.g. your IP as `203.0.113.5/32`)
+- (Optional) An existing EC2 key pair — one is auto-created if not provided
 
 #### Parameters
 
 | Parameter | Required | Default | Description |
 |-----------|----------|---------|-------------|
-| `KeyPairName` | Yes | — | Name of an existing EC2 key pair for SSH access |
-| `SSHSourceCIDR` | Yes | — | CIDR block allowed to SSH into the instance (e.g. `203.0.113.0/32`) |
+| `KeyPairName` | No | — | Name of an existing EC2 key pair. If omitted, a key pair is auto-created and the private key is stored in SSM Parameter Store. |
+| `SSHSourceCIDR` | No | `0.0.0.0/0` | CIDR block allowed to SSH into the instance. Defaults to anywhere. |
 | `InstanceType` | No | `t3.medium` | EC2 instance type |
 | `ExistingVpcId` | No | — | ID of an existing VPC to launch into (skips VPC creation) |
 | `ExistingSubnetId` | No | — | ID of a subnet in the existing VPC (required when `ExistingVpcId` is set) |
@@ -158,13 +157,13 @@ Launches an Ubuntu 24.04 EC2 instance in an isolated VPC with SSH-only ingress. 
 For this to work, you will need to download the YAML file or clone this repository.
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --parameters ParameterKey=KeyPairName,ParameterValue=<KEY-PAIR-NAME> ParameterKey=SSHSourceCIDR,ParameterValue=<YOUR-CIDR> --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --capabilities CAPABILITY_NAMED_IAM
 ```
 
 ### CLI Command Using the URL
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/sandbox-cloud-formation.yaml' --region us-east-1 --parameters ParameterKey=KeyPairName,ParameterValue=<KEY-PAIR-NAME> ParameterKey=SSHSourceCIDR,ParameterValue=<YOUR-CIDR> --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/sandbox-cloud-formation.yaml' --region us-east-1 --capabilities CAPABILITY_NAMED_IAM
 ```
 
 ### Using an Existing VPC
@@ -172,7 +171,7 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https:
 By default, the sandbox template creates a new VPC for each stack. AWS accounts have a default limit of 5 VPCs per region, so if you are creating multiple sandboxes you can hit that limit quickly. To avoid this, pass `ExistingVpcId` and `ExistingSubnetId` to launch the instance into a VPC you already have:
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --parameters ParameterKey=KeyPairName,ParameterValue=<KEY-PAIR-NAME> ParameterKey=SSHSourceCIDR,ParameterValue=<YOUR-CIDR> ParameterKey=ExistingVpcId,ParameterValue=<VPC-ID> ParameterKey=ExistingSubnetId,ParameterValue=<SUBNET-ID> --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --parameters ParameterKey=ExistingVpcId,ParameterValue=<VPC-ID> ParameterKey=ExistingSubnetId,ParameterValue=<SUBNET-ID> --capabilities CAPABILITY_NAMED_IAM
 ```
 
 **Note:** The existing subnet must have internet access (via an Internet Gateway route) and auto-assign public IP addresses enabled, so the instance is reachable over SSH.
@@ -183,9 +182,19 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file:/
 |--------|-------------|
 | `PublicIP` | Public IP address of the sandbox instance |
 | `InstanceId` | EC2 instance ID |
+| `KeyPairSSMParameter` | SSM path to retrieve the auto-created private key (only when `KeyPairName` is omitted) |
 | `SpekkCommand` | Command to register the sandbox with the spekk CLI |
 
 The `SpekkCommand` output provides a ready-to-paste command that registers the new sandbox instance with the spekk CLI, so you can manage it via `spekk sandbox` commands.
+
+#### Retrieving the Auto-Created Private Key
+
+When you omit `KeyPairName`, the private key is stored in SSM Parameter Store. Retrieve it with:
+
+```term
+aws ssm get-parameter --name <KeyPairSSMParameter-value> --with-decryption --query Parameter.Value --output text > sandbox-key.pem
+chmod 400 sandbox-key.pem
+```
 
 To retrieve outputs after the stack is created:
 
