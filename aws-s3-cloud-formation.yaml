@@ -28,8 +28,10 @@ Resources:
         CorsRules:
           - AllowedHeaders:
               - 'Authorization'
+              - 'Content-Type'
             AllowedMethods:
               - GET
+              - PUT
             AllowedOrigins:
               - '*'
             MaxAge: 3600
