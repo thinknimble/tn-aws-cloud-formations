@@ -45,7 +45,7 @@ For this to work, you will need to download the YAML file or clone this reposito
 If you are setting this up on an aws account that does not have the file stored in its own S3 you will need to use the local file.
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> ParameterKey=EnableEncryption,ParameterValue=true --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://<FILE-PATH>  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> ParameterKey=EnableEncryption,ParameterValue=true --capabilities CAPABILITY_NAMED_IAM --query "{StackId: StackId, DescribeCommand: 'aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1'}"
 ```
 
 ### CLI Command Using the URL
@@ -53,7 +53,7 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file:/
 For convenience, the configs are also available on a public S3 bucket, so that you do not need to download them.
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> ParameterKey=EnableEncryption,ParameterValue=true --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/aws-s3-cloud-formation.yaml'  --region us-east-1 --parameters ParameterKey=BucketNameParameter,ParameterValue=<BUCKET-NAME> ParameterKey=EnableEncryption,ParameterValue=true --capabilities CAPABILITY_NAMED_IAM --query "{StackId: StackId, DescribeCommand: 'aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1'}"
 ```
 
 The following arguments are required:
@@ -87,13 +87,13 @@ When the cloud formation is done you can get the Access Key ID, Secret, and Buck
 Quick command to get just the outputs:
 
 ```term
-aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].Outputs" --output table
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1 --query "Stacks[0].Outputs" --output table
 ```
 
 Or as JSON:
 
 ```term
-aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].Outputs"
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1 --query "Stacks[0].Outputs"
 ```
 
 #### Using the console
@@ -117,19 +117,19 @@ First, an AWS Administrator will need to enable Amazon Bedrock organization-wide
 ### With File
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://bedrock-user-permissions.yaml  --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=AllowedModels,ParameterValue=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL> --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://bedrock-user-permissions.yaml  --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=AllowedModels,ParameterValue=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL> --capabilities CAPABILITY_NAMED_IAM --query "{StackId: StackId, DescribeCommand: 'aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1'}"
 ```
 
 ### With URL
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/bedrock-user-permissions.yaml' --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=AllowedModels,ParameterValue=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/bedrock-user-permissions.yaml' --region us-east-1 --parameters ParameterKey=ProjectName,ParameterValue=<PROJECTNAME> ParameterKey=AllowedModels,ParameterValue=<SOME_MODEL_ARN_OR_*_FOR_DEFAULT_ALL>  --capabilities CAPABILITY_NAMED_IAM --query "{StackId: StackId, DescribeCommand: 'aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1'}"
 ```
 
 ### Check Status & Outputs with File
 
 ```term
-aws cloudformation describe-stacks --stack-name <STACK-NAME>
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1 --query "Stacks[0].Outputs" --output table
 ```
 
 ## Create Sandbox Instance
@@ -157,13 +157,13 @@ Launches an Ubuntu 24.04 EC2 instance in an isolated VPC with SSH-only ingress. 
 For this to work, you will need to download the YAML file or clone this repository.
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --capabilities CAPABILITY_NAMED_IAM --query "{StackId: StackId, DescribeCommand: 'aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1'}"
 ```
 
 ### CLI Command Using the URL
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/sandbox-cloud-formation.yaml' --region us-east-1 --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https://tn-s3-cloud-formation.s3.amazonaws.com/sandbox-cloud-formation.yaml' --region us-east-1 --capabilities CAPABILITY_NAMED_IAM --query "{StackId: StackId, DescribeCommand: 'aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1'}"
 ```
 
 ### Using an Existing VPC
@@ -171,7 +171,7 @@ aws cloudformation create-stack --stack-name <STACK-NAME> --template-url 'https:
 By default, the sandbox template creates a new VPC for each stack. AWS accounts have a default limit of 5 VPCs per region, so if you are creating multiple sandboxes you can hit that limit quickly. To avoid this, pass `ExistingVpcId` and `ExistingSubnetId` to launch the instance into a VPC you already have:
 
 ```term
-aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --parameters ParameterKey=ExistingVpcId,ParameterValue=<VPC-ID> ParameterKey=ExistingSubnetId,ParameterValue=<SUBNET-ID> --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name <STACK-NAME> --template-body file://sandbox-cloud-formation.yaml --region us-east-1 --parameters ParameterKey=ExistingVpcId,ParameterValue=<VPC-ID> ParameterKey=ExistingSubnetId,ParameterValue=<SUBNET-ID> --capabilities CAPABILITY_NAMED_IAM --query "{StackId: StackId, DescribeCommand: 'aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1'}"
 ```
 
 **Note:** The existing subnet must have internet access (via an Internet Gateway route) and auto-assign public IP addresses enabled, so the instance is reachable over SSH.
@@ -199,7 +199,7 @@ chmod 400 sandbox-key.pem
 To retrieve outputs after the stack is created:
 
 ```term
-aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].Outputs" --output table
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1 --query "Stacks[0].Outputs" --output table
 ```
 
 ## Deleting a Stack
@@ -207,7 +207,7 @@ aws cloudformation describe-stacks --stack-name <STACK-NAME> --query "Stacks[0].
 To delete any stack created by these templates (S3, Bedrock, or Sandbox), run:
 
 ```term
-aws cloudformation delete-stack --stack-name <STACK-NAME>
+aws cloudformation delete-stack --stack-name <STACK-NAME> --region us-east-1
 ```
 
 All resources created by the stack are deleted automatically — CloudFormation manages the full lifecycle, so there are no orphaned resources left behind.
@@ -215,7 +215,7 @@ All resources created by the stack are deleted automatically — CloudFormation 
 To verify the stack has been fully deleted:
 
 ```term
-aws cloudformation describe-stacks --stack-name <STACK-NAME>
+aws cloudformation describe-stacks --stack-name <STACK-NAME> --region us-east-1
 ```
 
 Once deletion is complete, this command returns a `ValidationError` indicating the stack does not exist.
